@@ -1,0 +1,67 @@
+import java.util.Arrays;
+
+public class Benchmark {
+
+    public static void main(String[] args) {
+        int[] sizes = {1000, 2000, 4000, 8000, 16000}; // Array sizes for benchmarking
+        for (int size : sizes) {
+            int[] randomArray = generateRandomArray(size);
+            int[] orderedArray = generateOrderedArray(size);
+            int[] partiallyOrderedArray = generatePartiallyOrderedArray(size);
+            int[] reverseOrderedArray = generateReverseOrderedArray(size);
+
+            System.out.println("Benchmarking Insertion Sort for size: " + size);
+            Benchmark_Timer<int[]> timer = new Benchmark_Timer<>(
+                "Insertion Sort",
+                input -> Arrays.copyOf(input, input.length), // Pre-processing
+                a -> new InsertionSortBasic<Integer>().sort(a) // Run
+            );
+
+            double randomTime = timer.run(randomArray, 10);
+            System.out.println("Random: " + randomTime + " ms");
+
+            double orderedTime = timer.run(orderedArray, 10);
+            System.out.println("Ordered: " + orderedTime + " ms");
+
+            double partiallyOrderedTime = timer.run(partiallyOrderedArray, 10);
+            System.out.println("Partially Ordered: " + partiallyOrderedTime + " ms");
+
+            double reverseOrderedTime = timer.run(reverseOrderedArray, 10);
+            System.out.println("Reverse Ordered: " + reverseOrderedTime + " ms");
+        }
+    }
+
+    static int[] generateRandomArray(int size) {
+        int[] array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = (int) (Math.random() * size);
+        }
+        return array;
+    }
+
+    static int[] generateOrderedArray(int size) {
+        int[] array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = i; // Ordered array
+        }
+        return array;
+    }
+
+    static int[] generatePartiallyOrderedArray(int size) {
+        int[] array = generateOrderedArray(size);
+        // Introduce some random elements within the ordered array
+        for (int i = 0; i < size / 10; i++) {
+            int randomIndex = (int) (Math.random() * size);
+            array[randomIndex] = (int) (Math.random() * size);
+        }
+        return array;
+    }
+
+    static int[] generateReverseOrderedArray(int size) {
+        int[] array = new int[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = size - i - 1; // Reverse ordered array
+        }
+        return array;
+    }
+}
